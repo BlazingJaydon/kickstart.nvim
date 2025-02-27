@@ -110,6 +110,28 @@ vim.opt.mouse = 'a'
 -- Don't show the mode, since it's already in the status line
 vim.opt.showmode = false
 
+-- Making the tab arrows go away(I think?)
+vim.opt.shiftwidth = 4
+
+vim.opt.tabstop = 4
+
+-- -- Trying to get rid of the border padding around neovim instance
+-- vim.api.nvim_create_autocmd({ 'UIEnter', 'ColorScheme' }, {
+--   callback = function()
+--     local normal = vim.api.nvim_get_hl(0, { name = 'Normal' })
+--     if not normal.bg then
+--       return
+--     end
+--     io.write(string.format('\027]11;#%06x\027\\', normal.bg))
+--   end,
+-- })
+--
+-- vim.api.nvim_create_autocmd('UILeave', {
+--   callback = function()
+--     io.write '\027]111\027\\'
+--   end,
+-- })
+
 -- Sync clipboard between OS and Neovim.
 --  Schedule the setting after `UiEnter` because it can increase startup-time.
 --  Remove this option if you want your OS clipboard to remain independent.
@@ -622,8 +644,10 @@ require('lazy').setup({
         -- gopls = {},
         pyright = {},
         verible = {},
-        cssls = {},
-        -- css_variables = {},
+        --cssls = {},
+        clangd = {},
+        --css_variables = {},
+        --cssmodules_ls = {},
         html = {},
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
@@ -775,6 +799,16 @@ require('lazy').setup({
         },
         completion = { completeopt = 'menu,menuone,noinsert' },
 
+        window = {
+          completion = cmp.config.window.bordered {
+            winhighlight = 'Normal:Pmenu,FloatBorder:Character,CursorLine:DiffText,Search:None',
+          },
+
+          documentation = cmp.config.window.bordered {
+            winhighlight = 'Normal:Pmenu,FloatBorder:Character,CursorLine:DiffText,Search:None',
+          },
+        },
+
         -- For an understanding of why these mappings were
         -- chosen, you will need to read `:help ins-completion`
         --
@@ -843,8 +877,10 @@ require('lazy').setup({
 
   { 'catppuccin/nvim' },
   { 'shaunsingh/nord.nvim' },
-  --{ 'sainnhe/gruvbox-material' },
+  { 'sainnhe/gruvbox-material' },
   { 'rebelot/kanagawa.nvim' },
+  { 'AlexvZyl/nordic.nvim' },
+  { 'rose-pine/neovim' },
 
   { -- You can easily change to a different colorscheme.
     -- Change the name of the colorscheme plugin below, and then
@@ -852,20 +888,28 @@ require('lazy').setup({
     --
     -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
     --'folke/tokyonight.nvim',
-    'sainnhe/gruvbox-material',
+    -- 'sainnhe/gruvbox-material',
+    'AlexvZyl/nordic.nvim',
     priority = 1000, -- Make sure to load this before all the other start plugins.
     init = function()
       -- Load the colorscheme here.
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
+
+      -- Tokyo night
       --vim.cmd.colorscheme 'tokyonight-night'
-      vim.g.gruvbox_material_enable_italic = true
-      vim.g.gruvbox_material_disable_italic_comment = '0'
-      vim.g.gruvbox_material_foreground = 'material'
-      vim.cmd.colorscheme 'gruvbox-material'
+
+      -- Gruvbox
+      -- vim.g.gruvbox_material_enable_italic = true
+      -- vim.g.gruvbox_material_disable_italic_comment = '0'
+      -- vim.g.gruvbox_material_foreground = 'material'
+      -- vim.cmd.colorscheme 'gruvbox-material'
+
+      -- Nordic
+      vim.cmd.colorscheme 'nordic'
 
       -- You can configure highlights by doing something like:
-      vim.cmd.hi 'Comment gui=none'
+      -- vim.cmd.hi 'Comment gui=none'
     end,
   },
 
@@ -895,7 +939,7 @@ require('lazy').setup({
       --  and try some other statusline plugin
       local statusline = require 'mini.statusline'
       -- set use_icons to true if you have a Nerd Font
-      statusline.setup { use_icons = vim.g.have_nerd_font }
+      -- statusline.setup { use_icons = vim.g.have_nerd_font }
 
       -- You can configure sections in the statusline by overriding their
       -- default behavior. For example, here we set the section for
@@ -907,8 +951,13 @@ require('lazy').setup({
 
       -- ... and there is more!
       --  Check out: https://github.com/echasnovski/mini.nvim
+      require('mini.misc').setup()
+
+      -- Trying to get rid of the border padding around neovim instance
+      --MiniMisc.setup_termbg_sync()
     end,
   },
+
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
@@ -982,6 +1031,15 @@ require('lazy').setup({
     },
   },
 })
+
+-- Adjusting the operators for nordic colorscheme
+vim.api.nvim_set_hl(0, '@operator', { fg = '#81A1C1' })
+vim.api.nvim_set_hl(0, '@punctuation.bracket', { fg = '#C0C8D8' })
+
+vim.o.signcolumn = 'yes:1'
+
+-- Trying to get italic comments
+-- vim.api.nvim_set_hl(0, 'Comment', { italic = true })
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et

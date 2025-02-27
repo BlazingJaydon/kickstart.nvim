@@ -21,12 +21,27 @@ return {
             padding = 0,
           },
         },
+
+        indicator = {
+          style = 'none',
+        },
+
+        max_name_length = 50,
+
+        themable = true,
       },
+
       highlights = {
         fill = {
-          fg = '#3c3836',
-          bg = '#3c3836',
+          -- Gruvbox Bufferline Background
+          -- fg = '#3c3c3c',
+          -- bg = '#3c3c3c',
+
+          -- Nordic Bufferline customizations
+          fg = '#242933',
+          bg = '#242933',
         },
+        -- End of nordic customizations
         separator = {
           fg = '#282828',
         },
