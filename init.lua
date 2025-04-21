@@ -881,6 +881,8 @@ require('lazy').setup({
   { 'rebelot/kanagawa.nvim' },
   { 'AlexvZyl/nordic.nvim' },
   { 'rose-pine/neovim' },
+  { 'vague2k/vague.nvim' },
+  { 'folke/tokyonight.nvim' },
 
   { -- You can easily change to a different colorscheme.
     -- Change the name of the colorscheme plugin below, and then
@@ -900,13 +902,17 @@ require('lazy').setup({
       --vim.cmd.colorscheme 'tokyonight-night'
 
       -- Gruvbox
-      -- vim.g.gruvbox_material_enable_italic = true
-      -- vim.g.gruvbox_material_disable_italic_comment = '0'
-      -- vim.g.gruvbox_material_foreground = 'material'
-      -- vim.cmd.colorscheme 'gruvbox-material'
+      vim.g.gruvbox_material_enable_italic = true
+      vim.g.gruvbox_material_disable_italic_comment = '0'
+      vim.g.gruvbox_material_foreground = 'material'
+      vim.g.gruvbox_material_background = 'hard'
+      vim.cmd.colorscheme 'gruvbox-material'
 
       -- Nordic
-      vim.cmd.colorscheme 'nordic'
+      --vim.cmd.colorscheme 'nordic'
+
+      -- Catppuccin
+      --vim.cmd.colorscheme 'catppuccin'
 
       -- You can configure highlights by doing something like:
       -- vim.cmd.hi 'Comment gui=none'
@@ -1033,8 +1039,20 @@ require('lazy').setup({
 })
 
 -- Adjusting the operators for nordic colorscheme
-vim.api.nvim_set_hl(0, '@operator', { fg = '#81A1C1' })
-vim.api.nvim_set_hl(0, '@punctuation.bracket', { fg = '#C0C8D8' })
+-- vim.api.nvim_set_hl(0, '@operator', { fg = '#81A1C1' })
+-- vim.api.nvim_set_hl(0, '@punctuation.bracket', { fg = '#C0C8D8' })
+
+-- Gruvbox-Material
+vim.api.nvim_set_hl(0, 'CursorLineNr', { fg = '#7c6f64', bold = true })
+vim.api.nvim_set_hl(0, 'Comment', { fg = '#504945', italic = true })
+vim.api.nvim_set_hl(0, '@punctuation.bracket', { fg = '#a89984' })
+vim.api.nvim_set_hl(0, '@lsp.typemod.parameter.declaration', { fg = '#80aa9e' })
+vim.api.nvim_set_hl(0, '@lsp.typemod.parameter', { fg = '#80aa9e' })
+vim.api.nvim_set_hl(0, '@string.escape', { fg = '#e78a4e' })
+vim.api.nvim_set_hl(0, 'MatchParen', { fg = '#ea6962', bold = true })
+
+-- Catppuccin
+--vim.api.nvim_set_hl(0, 'CursorLineNr', { fg = '#b7bdf8', bold = true })
 
 vim.o.signcolumn = 'yes:1'
 

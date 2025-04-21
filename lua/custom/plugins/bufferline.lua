@@ -34,16 +34,23 @@ return {
       highlights = {
         fill = {
           -- Gruvbox Bufferline Background
-          -- fg = '#3c3c3c',
-          -- bg = '#3c3c3c',
+          fg = '#1d2021',
+          bg = '#1d2021',
 
           -- Nordic Bufferline customizations
-          fg = '#242933',
-          bg = '#242933',
+          -- fg = '#242933',
+          -- bg = '#242933',
+
+          -- --Catppuccin
+          -- fg = '#24273a',
+          -- bg = '#24273a',
         },
         -- End of nordic customizations
         separator = {
-          fg = '#282828',
+          -- Catppuccin
+          -- fg = '#8087a2',
+          -- Gruvbox
+          fg = '#504945',
         },
         offset_separator = {
           fg = '#ddc7a1',
