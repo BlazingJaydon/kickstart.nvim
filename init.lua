@@ -81,6 +81,7 @@ If you experience any errors while trying to install kickstart, run `:checkhealt
 I hope you enjoy your Neovim journey,
 - TJ
 
+
 P.S. You can delete this when you're done too. It's your config now! :)
 --]]
 
@@ -265,18 +266,18 @@ require('lazy').setup({
   --    require('gitsigns').setup({ ... })
   --
   -- See `:help gitsigns` to understand what the configuration keys do
-  { -- Adds git related signs to the gutter, as well as utilities for managing changes
-    'lewis6991/gitsigns.nvim',
-    opts = {
-      signs = {
-        add = { text = '+' },
-        change = { text = '~' },
-        delete = { text = '_' },
-        topdelete = { text = '‾' },
-        changedelete = { text = '~' },
-      },
-    },
-  },
+  -- { -- Adds git related signs to the gutter, as well as utilities for managing changes
+  --   'lewis6991/gitsigns.nvim',
+  --   opts = {
+  --     signs = {
+  --       add = { text = '+' },
+  --       change = { text = '~' },
+  --       delete = { text = '_' },
+  --       topdelete = { text = '‾' },
+  --       changedelete = { text = '~' },
+  --     },
+  --   },
+  -- },
 
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
   --
@@ -379,37 +380,58 @@ require('lazy').setup({
       { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
     },
     config = function()
-      -- Telescope is a fuzzy finder that comes with a lot of different things that
-      -- it can fuzzy find! It's more than just a "file finder", it can search
-      -- many different aspects of Neovim, your workspace, LSP, and more!
-      --
-      -- The easiest way to use Telescope, is to start by doing something like:
-      --  :Telescope help_tags
-      --
-      -- After running this command, a window will open up and you're able to
-      -- type in the prompt window. You'll see a list of `help_tags` options and
-      -- a corresponding preview of the help.
-      --
-      -- Two important keymaps to use while in Telescope are:
-      --  - Insert mode: <c-/>
-      --  - Normal mode: ?
-      --
-      -- This opens a window that shows you all of the keymaps for the current
-      -- Telescope picker. This is really useful to discover what Telescope can
-      -- do as well as how to actually do it!
-
-      -- [[ Configure Telescope ]]
-      -- See `:help telescope` and `:help telescope.setup()`
-      require('telescope').setup {
-        -- You can put your default mappings / updates / etc. in here
-        --  All the info you're looking for is in `:help telescope.setup()`
-        --
-        -- defaults = {
-        --   mappings = {
-        --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
-        --   },
-        -- },
-        -- pickers = {}
+      local ts = require 'telescope'
+      local h_pct = 0.95
+      local w_pct = 0.95
+      local w_limit = 75
+      local fullscreen_setup = {
+        borderchars = { '─', '│', '─', '│', '┌', '┐', '┘', '└' },
+        preview = { hide_on_startup = false },
+        layout_strategy = 'flex',
+        layout_config = {
+          flex = { flip_columns = 100 },
+          horizontal = {
+            mirror = false,
+            prompt_position = 'top',
+            width = function(_, cols, _)
+              return math.floor(cols * w_pct)
+            end,
+            height = function(_, _, rows)
+              return math.floor(rows * h_pct)
+            end,
+            preview_cutoff = 0,
+            preview_width = 0.5,
+          },
+          vertical = {
+            mirror = true,
+            prompt_position = 'top',
+            width = function(_, cols, _)
+              return math.floor(cols * w_pct)
+            end,
+            height = function(_, _, rows)
+              return math.floor(rows * h_pct)
+            end,
+            preview_cutoff = 10,
+            preview_height = 0.65,
+          },
+        },
+      }
+      ts.setup {
+        defaults = vim.tbl_extend('error', fullscreen_setup, {
+          sorting_strategy = 'ascending',
+          path_display = { 'filename_first' },
+          mappings = {
+            n = {
+              ['p'] = require('telescope.actions.layout').toggle_preview,
+              ['q'] = require('telescope.actions').close,
+              ['d'] = require('telescope.actions').delete_buffer,
+            },
+            i = {
+              ['<C-o>'] = require('telescope.actions.layout').toggle_preview,
+            },
+          },
+        }),
+        pickers = {},
         extensions = {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
@@ -432,25 +454,30 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
-      vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+      vim.keymap.set(
+        'n',
+        '<leader><leader>',
+        '<cmd>Telescope buffers sort_mru=true sort_lastused=true initial_mode=normal <cr>',
+        { desc = 'FZF existing buffers' }
+      )
 
       -- Slightly advanced example of overriding default behavior and theme
-      vim.keymap.set('n', '<leader>/', function()
-        -- You can pass additional configuration to Telescope to change the theme, layout, etc.
-        builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
-          winblend = 10,
-          previewer = false,
-        })
-      end, { desc = '[/] Fuzzily search in current buffer' })
+      -- vim.keymap.set('n', '<leader>/', function()
+      --   -- You can pass additional configuration to Telescope to change the theme, layout, etc.
+      --   builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
+      --     winblend = 10,
+      --     previewer = false,
+      --   })
+      -- end, { desc = '[/] Fuzzily search in current buffer' })
 
       -- It's also possible to pass additional configuration options.
       --  See `:help telescope.builtin.live_grep()` for information about particular keys
-      vim.keymap.set('n', '<leader>s/', function()
-        builtin.live_grep {
-          grep_open_files = true,
-          prompt_title = 'Live Grep in Open Files',
-        }
-      end, { desc = '[S]earch [/] in Open Files' })
+      -- vim.keymap.set('n', '<leader>s/', function()
+      --   builtin.live_grep {
+      --     grep_open_files = true,
+      --     prompt_title = 'Live Grep in Open Files',
+      --   }
+      -- end, { desc = '[S]earch [/] in Open Files' })
 
       -- Shortcut for searching your Neovim configuration files
       vim.keymap.set('n', '<leader>sn', function()
@@ -578,7 +605,7 @@ require('lazy').setup({
           --
           -- When you move your cursor, the highlights will be cleared (the second autocommand).
           local client = vim.lsp.get_client_by_id(event.data.client_id)
-          if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
+          if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
             local highlight_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight', { clear = false })
             vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
               buffer = event.buf,
@@ -605,7 +632,7 @@ require('lazy').setup({
           -- code, if the language server you are using supports them
           --
           -- This may be unwanted, since they displace some of your code
-          if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
+          if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
             map('<leader>th', function()
               vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
             end, '[T]oggle Inlay [H]ints')
@@ -640,9 +667,8 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
-        -- clangd = {},
         -- gopls = {},
-        pyright = {},
+        -- pyright = {},
         verible = {},
         --cssls = {},
         clangd = {},
@@ -690,6 +716,7 @@ require('lazy').setup({
         'stylua', -- Used to format Lua code
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
+      --require('java').setup()
 
       require('mason-lspconfig').setup {
         handlers = {
@@ -703,6 +730,7 @@ require('lazy').setup({
           end,
         },
       }
+      require('lspconfig').jdtls.setup {}
     end,
   },
 
@@ -883,6 +911,8 @@ require('lazy').setup({
   { 'rose-pine/neovim' },
   { 'vague2k/vague.nvim' },
   { 'folke/tokyonight.nvim' },
+  { 'neanias/everforest-nvim' },
+  { 'thesimonho/kanagawa-paper.nvim' },
 
   { -- You can easily change to a different colorscheme.
     -- Change the name of the colorscheme plugin below, and then
@@ -906,7 +936,12 @@ require('lazy').setup({
       vim.g.gruvbox_material_disable_italic_comment = '0'
       vim.g.gruvbox_material_foreground = 'material'
       vim.g.gruvbox_material_background = 'hard'
-      vim.cmd.colorscheme 'gruvbox-material'
+      -- vim.cmd.colorscheme 'gruvbox-material'
+
+      -- Kanagawa
+      vim.cmd.colorscheme 'kanagawa-dragon'
+
+      -- Everforest
 
       -- Nordic
       --vim.cmd.colorscheme 'nordic'
@@ -1043,21 +1078,57 @@ require('lazy').setup({
 -- vim.api.nvim_set_hl(0, '@punctuation.bracket', { fg = '#C0C8D8' })
 
 -- Gruvbox-Material
-vim.api.nvim_set_hl(0, 'CursorLineNr', { fg = '#7c6f64', bold = true })
-vim.api.nvim_set_hl(0, 'Comment', { fg = '#504945', italic = true })
-vim.api.nvim_set_hl(0, '@punctuation.bracket', { fg = '#a89984' })
-vim.api.nvim_set_hl(0, '@lsp.typemod.parameter.declaration', { fg = '#80aa9e' })
-vim.api.nvim_set_hl(0, '@lsp.typemod.parameter', { fg = '#80aa9e' })
-vim.api.nvim_set_hl(0, '@string.escape', { fg = '#e78a4e' })
-vim.api.nvim_set_hl(0, 'MatchParen', { fg = '#ea6962', bold = true })
+-- vim.api.nvim_set_hl(0, 'CursorLineNr', { fg = '#7c6f64', bold = true })
+-- vim.api.nvim_set_hl(0, 'Comment', { fg = '#504945', italic = true })
+-- vim.api.nvim_set_hl(0, '@punctuation.bracket', { fg = '#a89984' })
+-- vim.api.nvim_set_hl(0, '@lsp.typemod.parameter.declaration', { fg = '#80aa9e' })
+-- vim.api.nvim_set_hl(0, '@lsp.typemod.parameter', { fg = '#80aa9e' })
+-- vim.api.nvim_set_hl(0, '@string.escape', { fg = '#e78a4e' })
+-- vim.api.nvim_set_hl(0, 'MatchParen', { fg = '#ea6962', bold = true })
 
 -- Catppuccin
 --vim.api.nvim_set_hl(0, 'CursorLineNr', { fg = '#b7bdf8', bold = true })
 
 vim.o.signcolumn = 'yes:1'
 
--- Trying to get italic comments
--- vim.api.nvim_set_hl(0, 'Comment', { italic = true })
-
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
+
+-- code folding options
+require('ufo').setup()
+vim.o.foldcolumn = '0' -- '0' is not bad
+vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
+vim.o.foldlevelstart = 99
+vim.o.foldenable = true
+
+local bg_file = vim.fn.stdpath 'state' .. '/background.txt'
+
+-- Read & apply at startup
+do
+  local f = io.open(bg_file, 'r')
+  if f then
+    local bg = f:read '*l'
+    f:close()
+    if bg == 'dark' or bg == 'light' then
+      vim.opt.background = bg
+    end
+  end
+end
+
+-- Choose and set your theme here
+if vim.opt.background:get() == 'dark' then
+  vim.cmd 'colorscheme kanagawa-dragon'
+else
+  vim.cmd 'colorscheme kanagawa-paper-canvas'
+end
+
+-- Save on exit
+vim.api.nvim_create_autocmd('VimLeavePre', {
+  callback = function()
+    local f = io.open(bg_file, 'w')
+    if f then
+      f:write(vim.opt.background:get())
+      f:close()
+    end
+  end,
+})

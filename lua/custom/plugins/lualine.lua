@@ -53,43 +53,56 @@ return {
         },
         lualine_b = {
           {
-            'pretty_path',
-            highlights = {
-              modified = { fg = '#A3BE8C', bold = true, italic = true },
-            },
-          },
-        },
-        lualine_c = {
-          {
             'branch',
             icon = '',
           },
           {
             'diff',
-            symbols = { added = '󰐙', modified = ' ', removed = ' 󰍷' },
+            symbols = { added = '+', modified = '~', removed = '-' },
             colored = false,
+          },
+        },
+        lualine_c = {
+          {
+            'pretty_path',
+            highlights = {
+              modified = { fg = '#87a987', bold = true, italic = true },
+            },
           },
         },
         lualine_x = {
           {
             'diagnostics',
-            symbols = { error = ' ', warn = ' ', info = '󰙎 ', hint = ' ' },
+            symbols = { error = '', warn = '', info = '󰙎 ', hint = ' ' },
             update_in_insert = true,
           },
         },
         lualine_y = { clients_lsp },
-        lualine_z = {
-          { 'location', separator = { left = '', right = '' }, icon = '' },
-        },
+        lualine_z = {},
       },
-      inactive_sections = {
-        lualine_a = { 'filename' },
-        lualine_b = {},
-        lualine_c = {},
-        lualine_x = {},
-        lualine_y = {},
-        lualine_z = { 'location' },
-      },
+      -- tabline = {
+      --   lualine_a = {
+      --     {
+      --       'pretty_path',
+      --       highlights = {
+      --         modified = { fg = '#A3BE8C', bold = true, italic = true },
+      --       },
+      --     },
+      --   },
+      --   lualine_b = {},
+      --   lualine_c = {},
+      --   lualine_x = {},
+      --   lualine_y = {},
+      --   lualine_z = {},
+      -- },
+      -- inactive_sections = {
+      --   lualine_a = { 'filename' },
+      --   lualine_b = {},
+      --   lualine_c = {},
+      --   lualine_x = {},
+      --   lualine_y = {},
+      --   lualine_z = { 'location' },
+      -- },
       extensions = { 'toggleterm', 'trouble' },
     }
   end,
